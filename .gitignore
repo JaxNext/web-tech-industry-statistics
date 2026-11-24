@@ -1,0 +1,6 @@
+# Unpacked .pptx cache — regenerable, large (12 MB+)
+unpacked/
+build/
+
+# macOS
+.DS_Store
