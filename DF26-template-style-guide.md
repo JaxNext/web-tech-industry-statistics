@@ -1,126 +1,164 @@
 # DF'26 Shenzhen 幻灯片模板 — 风格与布局指南
 
-> 用途：下次生成幻灯片时，先用 HTML 出预览（16:9、本指南配色/字体），用户确认后一次性生成 .pptx。
-> 源模板：`Jax-DF'26-Shenzhen.pptx`（**56 页**风格参考，含 halftone 底图 PNG）。
-> 工具：`tools/pptx_deck.py`（unpack / keep / replace-text / fonts / pack / check / dump）。
+> **源模板**：`template.pptx` —— 3 页，分别是目录页、章节封面、内容页。
+> 画布 **10 × 5.625 in（16:9）**，底色 `#F0F0F0`，黑描边 + 白面板 + 黄色涂鸦。
+> 旧版 56 页 Google 模板（`Jax-DF'26-Shenzhen.pptx`）已作废，不要再按它排版。
+> 用途：先用 HTML 出预览（16:9、本指南规格），确认后一次性生成 .pptx。
 
 ---
 
-## 1. 配色（Google Material）
+## 1. 画布与色板
 
-| 角色 | 色值 | 说明 |
-|---|---|---|
-| Blue | `#4285f4` | 主蓝 |
-| Green | `#34a853` | 主绿 |
-| Red | `#ea4335` | 主红 |
-| Yellow | `#fbbc04` | 主黄 |
-| Halftone Blue | `#57caff` | 底图网点蓝 |
-| Halftone Green | `#5cdb6d` | 底图网点绿 |
-| Halftone Pink | `#ff7daf` | 底图网点粉 |
-| Halftone Yellow | `#ffd427` | 底图网点黄 |
-| Pastel Blue | `#c3ecf6` | 浅色块 |
-| Pastel Green | `#ccf6c5` | 浅色块 |
-| Pastel Red | `#f8d8d8` | 浅色块 |
-| Pastel Yellow | `#ffe7a5` | 浅色块 |
-| Off-White | `#f0f0f0` | 页面底色 |
-| Black 02 | `#1e1e1e` | 正文黑 |
+| 项 | 值 |
+|---|---|
+| 画布 | `9144000 × 5143500` EMU = **10 × 5.625 in** = 960 × 540 px @96dpi |
+| 页面底色 | `#F0F0F0`（母版 `p:bg` 实心底色） |
+| 墨色 / 描边 / 正文 | `#1E1E1E` |
+| 白面板 | `#FFFFFF` |
+| 主强调 accent1 | `#4285F4` 蓝 |
+| 强调 accent2 | `#EA4335` 红 |
+| 强调 accent3 | `#FBBC04` 黄（涂鸦主色） |
+| 强调 accent4 | `#34A853` 绿 |
+| 辅 accent5 / 6 | `#0094A7` 青 / `#EEFF41` 黄绿 |
 
-主色规则：一页只用 1 个主色 + 同色系 halftone + 同色系 pastel。
+**规则**：一页只用 1 个强调色，且只用在数字、编号、卡片小标题上；正文和描边永远是 `#1E1E1E`。没有阴影、没有渐变。
 
 ## 2. 字体
 
-| 用途 | 字体 | 字号（pt） |
+| 用途 | 字体 | 字号 |
 |---|---|---|
-| 大标题/声明 | Google Sans Bold | 30 |
-| 副标题/kicker | Roboto Mono Light | 16 |
-| 正文/条目 | Google Sans Normal | 25 / 20 |
-| 大数字（stat） | Google Sans Medium | 110 |
+| 页面标题（内容页胶囊） | Google Sans | 25 pt |
+| 章节标题 | Google Sans Bold | 45 pt |
+| 章节编号 | Roboto Mono Thin | 61 pt |
+| 目录条目 / 页码 | Google Sans Bold | 16 pt |
+| 正文 | Google Sans | 18–25 pt（母版 bodyStyle 默认 14 pt） |
 
-⚠️ **中文字体**：Google Sans 无 CJK 字形。生成中文时，`a:ea` 字体改为 **PingFang SC**（Mac 原生）；Windows 放映建议改「微软雅黑」。拉丁字符/数字仍用 Google Sans。
+⚠️ **中文**：模板把 `a:latin` 和 `a:ea` 都写成 `Google Sans`，而它没有 CJK 字形。生成中文时把 `a:ea` 改为 **PingFang SC**（Mac）/ **Noto Sans SC**（Google Slides）/ 微软雅黑（Windows 放映）。
 
-## 3. 布局清单（放映页序 → slide 文件）
+## 3. 视觉语言
 
-> ⚠️ **页序 ≠ 文件名**。下表「页」是放映顺序，右列才是要 `keep` 的 `slideN.xml`。以 `python3 tools/pptx_deck.py dump` 输出为准。
+三种版式共用同一套语言，先认清这四件套：
 
-| 页 | slide 文件 | 布局 | 用途 |
-|---|---|---|---|
-| 1–3 | slide1–3 | 配色字体规格 / 分隔页 | 参考，跳过 |
-| 4–7 | slide4–7 | 标题页（标题 + 讲者 + 地点） | 封面/开场 |
-| 8–12 | slide8–12 | 小节页（单行→5 行，编号 01–05） | 章节页 |
-| 13–16 | slide13–16 | 小节标题 + 副标题 + 地点 | 章节页 |
-| 17 | slide17 | 「Content Slides」分隔页 | 跳过 |
-| 18–20 | slide18–20 | 整屏 / 大段文字 | 长文本 |
-| 21 | slide21 | 条目排版规格（20pt 主条 / 25pt 正文） | 参考，跳过 |
-| **22** | slide22 | **单行标题 + 4 条** | 观点总览 |
-| **23** | slide23 | **双行标题 + 4 条** | 观点总览 |
-| 24–28 | slide24–28 | 陈述/引述 + 地点 | 大字陈述 |
-| **29** | slide29 | **大数字 stat**（50% + 2 标签） | 关键数据 |
-| 30–31 | slide30–31 | 纯图 stat 变体（无可编辑文本） | 关键数据 |
-| 32 | slide32 | 半屏讲者 | 讲者出镜 |
-| **33–34** | slide33–34 | **无标题大字声明** | 封面 / 金句 |
-| 35–40 | slide35–40 | 大数字 stat 变体 | 关键数据 |
-| 41 | slide41 | 无标题大字声明 | 金句 |
-| **42** | slide42 | **单行标题 + 引述** | 论点 + 证据 |
-| **43** | slide43 | **双行标题 + 引述** | 论点 + 证据 |
-| **44** | slide44 | 单行标题 + 4 条（照片拼贴，**窄**） | 条目 |
-| **45** | slide45 | 双行标题 + 4 条（照片拼贴，**窄**） | 条目 |
-| **46** | slide46 | **引述 + 署名 + 地点** | 结论 / 判定 |
-| 47–56 | slide47–56 | 图表：元素/简单/全能/大组合/流程/流式/分组/分层/折线 | 图表 |
+1. **白色圆角面板 + 黑色描边** —— `roundRect`，`adj=28113`（≈28%，即圆角 ≈ 短边 × 0.28），描边 1.5 pt `#1E1E1E`。
+2. **手绘涂鸦（仅限目录页与章节封面）** —— 黄色箭头、花括号 `{ }`、三连弧线、`</`、`#`，黑色细描边。这些只存在于 `image2.png` / `image3.png` 背景图里；**内容页不放任何涂鸦或曲线**。
+3. **黑色胶囊** —— 目录页的 “Table of Contents” 标签：黑底、白字、全圆角。
+4. **大量留白** —— 内容页正文区通常只占上半页，下半页留空给讲者与视觉呼吸。
 
-**关键约束（实测）**：
-- 宽版条目页（22/23）：每条 1–2 行，约 **28 字/行**。
-- 窄版照片拼贴页（44/45）：每条 ≤ 2 行，约 **12 字/行**，总行数 ≤ 7，否则溢出（上次溢出的正是这类）。
-- 标题上限：单行最安全；5 行标题仅 slide12/16。
+## 4. 三种版式（实测坐标）
 
-## 4. 推荐内容映射（7 页范式）
+> 单位：英寸（EMU ÷ 914400）；括号内是相对于 960×540 px 的像素。
 
-| 页 | 用途 | slide 文件 |
+### 4.1 目录页（slide1）
+
+- 背景：整页图片 `image2.png`（1920×1080）—— 黑胶囊标题 + 白色圆角大面板 + 左右黄色花括号涂鸦
+- 条目文本框：x **1.78"** (171) · y **1.46"** (140) · 3.34 × 4.08"
+  - 16 pt 粗体，左对齐，**条目之间空一行**
+- 页码文本框：x **7.43"** (713) · y **1.37"** (131) · 0.56 × 4.38"
+  - 16 pt 粗体，居中，与左侧条目逐行对齐
+
+### 4.2 章节封面（slide2）
+
+- 背景：整页图片 `image3.png`（2048×1152）—— 白色圆角气泡面板 + 黄色箭头 + 三连弧线 + GDG logo
+- 编号（`01`）：x **0.68"** (65) · y **0.50"** (48) · 61 pt Roboto Mono Thin
+- 标题：x **3.57"** (343) · y **0.85"** (82) · 5.70 × 2.78" · 45 pt 粗体
+
+### 4.3 内容页（slide3）
+
+- 背景：继承母版 `#F0F0F0`，无图片，**无任何涂鸦或装饰曲线**
+- **标题胶囊 = 面包屑**：x **0.36"** (46) · y **0.35"** (45) · h **0.76"** (97)
+  - 白底、1.5 pt `#1E1E1E` 描边、圆角 ≈0.21"、垂直居中、内边距 0.1"
+  - 文案格式：**`系列名 / 小节名`**（如 `Chrome Built-in AI / 它是什么`），让听众知道当前在整场结构里的位置
+  - 字号 38 px（约 21 pt）——比正文标题小，它是导航，不是观点
+  - 模板里是固定宽度的 roundRect；实际按文字长度拉伸，上限约 7.6"（980 px）
+- **页面标题（关键句）**：胶囊下方，y ≈ **1.55"** (200)，**46 px 粗体 `#1E1E1E`**
+  - 这是本页真正要讲的那句话，必须比胶囊大一档、字重明显更重
+- **右上 logo**：`image4.png`（DevFest）· x **8.24"** (791) · y **0.35"** (34) · 1.49 × 0.29" (143×28)
+- **正文区**：标题下方，y ≥ **2.3"** (295)，左右各留 0.36" (46)
+  - ⚠️ 模板**没有正文占位符**，`slide3.xml` 里只有一个标题胶囊和一个 logo。正文与页面标题都需要自建文本框，样式沿用 Google Sans / `#1E1E1E`。
+- **不设页码**。页码会与正文抢注意力，且投影时无意义。
+
+### 4.4 封面页（整套的第 1 张，仍属内容页）
+
+单栏左对齐会让右半页与下半页全空，所以封面采用**左右双栏**：
+
+| 区 | 位置 | 内容 |
 |---|---|---|
-| 1 | 封面 / 论点（无标题大字声明） | slide34 |
-| 2 | 核心观点总览（单行标题 + 4 条） | slide22 |
-| 3 | 论断 A 数据（大数字 stat） | slide29 |
-| 4 | 论断 B（单行标题 + 引述） | slide42 |
-| 5 | 论断 C+D（双行标题 + 4 条） | slide23 |
-| 6 | 判定 / 结论（引述 + 署名） | slide46 |
-| 7 | 中国视角（双行标题 + 4 条，窄版） | slide45 |
+| 左栏 | 约占 58% 宽，垂直居中 | kicker（小号等宽）→ 主标题 70 px 粗体 → 一句话导语 19.5 px |
+| 右栏 | 约占 42% 宽，垂直居中 | **浅色面板**：用本套 deck 的 pastel 色（如 `#c3ecf6`）、深色文字、圆角 26 px、1.5 px 低对比描边；标题「速览」+ 3 条要点，圆点用强调色 |
 
-## 5. Google Slides 导入（最终格式）
+> 为什么不用白色：标题胶囊已经是「白底 + 黑描边 + 圆角」，再放白卡片会像复制品。为什么不用黑色：投影时整块太重，压过标题。pastel 色既有色彩又不抢视线，且每套 deck 取自己的色系，与强调色同源。
 
-> 最终目标是 Google Slides，不是 .pptx。`.pptx` 是导入 Slides 的原生桥：`File → Import slides`（或把 .pptx 拖进 Drive 后用 Slides 打开）即可，halftone 底图/形状/配色/文本框几乎无损保留。
+- 右栏面板就是把原来的三个 chip 立起来：`7 个 API` / `4 个已稳定` / `1 个已废弃`
+- 两栏都用 `align-items:center` 垂直居中，避免内容堆在左上角
+- 左栏导语若超过 1 行，最多 2 行；再长就删字，不要缩到 18 px 以下
 
-**字体映射（生成 .pptx 时直接写 Slides 原生字体，导入后无需手动改字体）：**
+### 4.5 两种内容承载方式
 
-| 模板字体 | 目标（Google Slides 原生） |
+| 内容形态 | 承载 |
 |---|---|
-| Google Sans Bold / Normal / Medium | Roboto（Bold / Regular / Medium） |
-| Roboto Mono Light | Roboto Mono |
-| PingFang SC（CJK） | Noto Sans SC |
+| 纯文字（要点、对比两栏） | **白色圆角面板**包一层，占满左右宽度，在标题下方垂直居中 |
+| 卡片网格 / 表格 / 代码 | 直接铺陈，靠自身的白卡片与深色代码块形成节奏，不再套外层面板 |
 
-## 6. 生成工作流（备忘）
+面板参数：白底、1.5 pt 黑描边、圆角 22 px、内边距 28×36 px。目的是给漂浮的短文本一个边界，避免"内容缩在左上角"。
 
-**本地工具 `tools/pptx_deck.py`**（纯标准库，Python 3.9+ 可用）：
+## 5. 内容页排版约束
 
-**模板缓存 `unpacked/`**：已解包并常驻（13 MB，`unpacked/.cache-source.json` 记录源文件 sha1）。
-下次直接用，不必重新解包；`unpacked/` 已在 `.gitignore` 中，不会污染 git。
+- **胶囊写导航，标题写观点**：胶囊只放 `系列 / 小节`，不要把小节标题当胶囊；本页要讲的那句话一定放在下方 46 px 粗体标题里
+- **不设页码、不加涂鸦**：内容页只有底色、面包屑胶囊、DevFest logo、页面标题、正文
+- 页面标题 ≤ 16 个中文字，超出换行或缩短
+- 正文 18–25 pt；一张页 3–5 条，每条 ≤ 30 字
+- 卡片/表格用白底 + 1.5 pt 黑描边 + 16 px 圆角，与大面板语言一致
+- 代码块用 `#1E1E1E` 深底 + 等宽字体，作为页面里唯一的深色块
+- 底部 0.8" 保持留白，不放任何元素
+
+## 6. HTML 预览映射（1280×720 画布）
+
+换算：**1 in = 128 px，1 pt = 1.778 px**。HTML 放大到 1280 宽是为了在屏幕上看得清，比例与模板完全一致。
+
+| 元素 | 模板 | HTML |
+|---|---|---|
+| 画布 | 10 × 5.625 in | 1280 × 720 |
+| 标题胶囊 左/上 | 0.36" / 0.35" | 46 / 45 |
+| 标题胶囊 高 | 0.76" | 97 |
+| 标题胶囊 圆角 | 0.21" | 27 |
+| 标题胶囊 字号 | 21 pt | 38 px |
+| 页面标题（关键句）字号 / 上沿 | — | 46 px / 200 |
+| 封面主标题 / 右栏面板 | — | 70 px / 最小 340 px 宽 |
+| logo 高 | 0.29" | 38 |
+| 正文起点 | 2.3" | 295 |
+| 正文 | 18–25 pt | 22–32 px |
+
+HTML 内容页只保留底色、标题胶囊、DevFest logo 与页码，不加涂鸦；logo 用 base64 内嵌，保证离线可看。
+
+## 7. 生成 .pptx 的工作流（备忘）
+
+**工具**：`tools/pptx_deck.py`（unpack / keep / replace-text / fonts / pack / check / status / dump）
+
+⚠️ 现有 `unpacked/` 缓存属于**旧的 56 页模板**，与本模板无关。用 `template.pptx` 时另建目录：
 
 ```bash
-T="Jax-DF'26-Shenzhen.pptx"
-python3 tools/pptx_deck.py status       unpacked/          # 先确认缓存未过期
-python3 tools/pptx_deck.py dump         unpacked/          # 看真实页序 + 全部文本
-python3 tools/pptx_deck.py keep         unpacked/ 34,22,29,42,23,46,45
-python3 tools/pptx_deck.py replace-text unpacked/ slide22.xml "Example with slide title" "一个悖论，四个论断"
-python3 tools/pptx_deck.py fonts        unpacked/ Roboto "Noto Sans SC"
-python3 tools/pptx_deck.py pack         unpacked/ out.pptx
-python3 tools/pptx_deck.py check        out.pptx           # XML 完整性 + 关系链
+T="template.pptx"
+python3 tools/pptx_deck.py dump    "$T"                 # 3 页：目录 / 章节封面 / 内容页
+python3 tools/pptx_deck.py unpack  "$T" build-tpl/
+python3 tools/pptx_deck.py keep    build-tpl/ 1,2,3     # 只保留三种母版
+# 内容页不够就复制 slide3（插件 add_slide.py 或手写 sldIdLst）
+python3 tools/pptx_deck.py replace-text build-tpl/ slide3.xml "Title" "零 JS 弹窗"
+python3 tools/pptx_deck.py fonts   build-tpl/ "Google Sans" "Noto Sans SC"
+python3 tools/pptx_deck.py pack    build-tpl/ out.pptx
+python3 tools/pptx_deck.py check   out.pptx
 ```
 
-⚠️ **模板一改，缓存即失效**（本次就发生过：模板从 40 页 5.4 MB 换成 56 页 12.4 MB，旧页码全部作废）。
-先跑 `status`：报 `STALE` 就按提示重新 `unpack`，再重新 `dump` 核对页序。
+- 正文**没有占位符**，需要在 `slide3.xml` 里自建 `<p:sp>`：位置从 y≈1.35" 开始，样式 `sz="1800"~"2500"`、`#1E1E1E`、Google Sans。
+- 标题胶囊若要随文字伸缩，改 `a:ext cx`；模板固定 3.12"，长标题会溢出框外。
+- `keep` 只改 `presentation.xml` 的 `sldIdLst`，未引用页仍留在包里；要瘦身再跑插件 `clean.py`。
+- `replace-text` 只匹配完整 run，找不到就报错；文本被拆碎时用 `set-text <slide> <n> <text>`。
 
-- ⚠️ `keep` 会改 `presentation.xml`，缓存就不再是原始模板；改完想恢复就重新 `unpack`。
-- `keep` 只重写 `presentation.xml` 的 `sldIdLst`；未引用的页/媒体仍留在包里，但不会放映（体积略大，无害）。需要瘦身再跑插件的 `clean.py`。
-- `replace-text` 只匹配**完整文本 run**，找不到就报错退出（避免 `.replace()` 静默失败）。文本被拆成多个 run 时用 `set-text <slide> <n> <text>` 按序号改。
-- `fonts` 同时改 `slides / slideLayouts / slideMasters / notesSlides`，并跳过 `+mj-lt` 这类主题引用。
-- ⚠️ 插件的 `pack.py` 用 `str | None` 语法，**需 Python 3.10+**；本工具的 `pack` 用 `zipfile`，3.9 也能跑。
-- `validate_layout.py` 的「Picture 越界/重叠」告警是模板 halftone 底图**故意出血**，属误报；只需关注「content bottom edge」文字溢出。
-- 输出样例：`front-end-paradox-DF26-Shenzhen.pptx`（7 页，已验证 0 溢出，已导入 Google Slides）。
+## 8. 与旧指南的差异
+
+| 项 | 旧（56 页 Google 模板） | 新（template.pptx） |
+|---|---|---|
+| 画布 | 13.33 × 7.5 in | **10 × 5.625 in** |
+| 视觉母题 | halftone 网点底图 | **白面板 + 黑描边 + 黄色涂鸦** |
+| 标题 | 30 pt 大写声明 | **面包屑胶囊（系列 / 小节）+ 46 px 粗体关键句** |
+| 版式数量 | 40+ 种 | **3 种**（目录 / 章节 / 内容） |
+| 强调色 | 4 主色 + 4 网点 + 4 浅色 | 4 强调色，仅用于数字/编号 |
