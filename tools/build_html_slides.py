@@ -52,8 +52,8 @@ h1{font-size:58px;line-height:1.12;margin:0 0 20px;font-weight:700;letter-spacin
 .stat .unit{font-size:38px;font-weight:500;color:var(--accent)}
 .stat-label{font-size:23px;line-height:1.4;margin-top:10px;max-width:820px}
 table{width:100%;border-collapse:collapse;font-size:16px}
-th{text-align:left;font-weight:600;color:var(--muted);font-size:12.5px;text-transform:uppercase;letter-spacing:.06em;padding:0 10px 9px;border-bottom:2px solid var(--ink)}
-td{padding:10px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{text-align:left;font-weight:600;color:var(--muted);font-size:12.5px;text-transform:uppercase;letter-spacing:.06em;padding:0 10px 8px;border-bottom:2px solid var(--ink)}
+td{padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
 tr:last-child td{border-bottom:none}
 code{font-family:'Roboto Mono',monospace;font-size:.92em;background:#e4e4e4;padding:1px 6px;border-radius:4px}
 pre{margin:0;max-height:452px;overflow:hidden;background:var(--ink);color:#e8eaed;border-radius:16px;padding:24px 26px;font-family:'Roboto Mono',monospace;font-size:15px;line-height:1.55;white-space:pre-wrap}
@@ -126,7 +126,7 @@ def cover(kicker, title, lead, chips, accent, halftone, pastel, foot):
 
 def page(kicker, title, inner, accent, halftone, pastel, foot, cls=""):
     section = kicker.split("/")[-1].strip()
-    panel = " panel" if not any(k in inner for k in ('class="grid', '<table', '<pre')) else ""
+    panel = " panel" if not any(k in inner for k in ('class="grid', '<table', '<pre', 'class="chart')) else ""
     crumb = f"{SHORT.get(foot, foot)} / {section}"
     return slide(f'''<div class="titlechip">{crumb}</div>
     <img class="logo" alt="DevFest" src="data:image/png;base64,{LOGO}">
@@ -582,6 +582,118 @@ s.append(page("04 / 价值", "用户少等，开发者少写", f'''<div class="t
 open(f"{OUT}/web-ui-features.html", "w", encoding="utf-8").write(
     shell("New Web UI Features", "\n".join(s)))
 
+# ============ 8. W3C tech tracking ============
+CSS = CSS + """
+.chart{background:#fff;border:1.5px solid var(--ink);border-radius:22px;padding:24px 30px 18px}
+.chart-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
+.chart-title{font-size:15px;font-weight:600}
+.legend{display:flex;gap:18px;font-size:13.5px;color:#3c4043;align-items:center}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.yaxis{display:flex;align-items:flex-end;gap:36px;height:258px;padding:0 6px}
+.ygroup{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%}
+.pair{display:flex;align-items:flex-end;gap:7px;height:100%}
+.bar{width:58px;border-radius:7px 7px 0 0;position:relative}
+.bar b{position:absolute;top:-25px;left:0;right:0;text-align:center;font-size:15px}
+.xl{font-size:14.5px;color:#3c4043;margin-top:10px}
+.hbar{display:flex;align-items:center;gap:14px;margin-bottom:12px}
+.hname{flex:0 0 152px;font-size:15px}
+.htrack{flex:1;background:#f4f4f4;border-radius:7px;height:26px;overflow:hidden}
+.hfill{height:100%;border-radius:7px}
+.hnum{flex:0 0 44px;text-align:right;font-weight:700;font-size:15px}
+.hex{flex:0 0 320px;font-size:13px;color:#5f6368;line-height:1.35}
+"""
+A, H, P = "#4285f4", "#57caff", "#c3ecf6"
+s = []
+s.append(cover("W3资讯 · 137 篇 · 2023-11 – 2026-11", "立项在减速，<br>话题在加速",
+  "把三年公众号文章里的 40 项规范技术和 41 个讨论主题分别计数，看到两条相反的曲线。",
+  ["40 项规范技术", "41 个讨论主题", "2026 仅剩 3 项"], A, H, P, "W3C 三年"))
+
+# 年度双系列
+years = [("2023", 0, 2), ("2024", 26, 17), ("2025", 11, 9), ("2026", 3, 13)]
+MAX = 26.0
+groups = ""
+for y, spec, top in years:
+    hs = max(spec / MAX * 100, 0.8)
+    ht = max(top / MAX * 100, 0.8)
+    groups += f'''<div class="ygroup"><div class="pair">
+      <div class="bar" style="height:{hs:.1f}%;background:{A}"><b>{spec}</b></div>
+      <div class="bar" style="height:{ht:.1f}%;background:{P};border:1.5px solid {A}33"><b>{top}</b></div>
+    </div><div class="xl">{y}</div></div>'''
+s.append(page("01 / 总览", "2024 立项最多，2026 话题最多",
+  f'''<div class="chart">
+    <div class="chart-head"><span class="chart-title">按最近报道年份统计（项）</span>
+      <div class="legend"><span><i style="background:{A}"></i>规范技术</span><span><i style="background:{P};border:1px solid {A}"></i>技术主题</span></div></div>
+    <div class="yaxis">{groups}</div>
+  </div>''', A, H, P, "W3C 三年"))
+
+# 阶段分布
+stages = [
+  ("首个公开工作草案", 21, "指针驱动动画 · 链接参数 · GPC"),
+  ("工作草案", 1, "EPUB 3.4"),
+  ("候选推荐", 8, "WebGPU · DAPT · 设备姿态"),
+  ("推荐标准", 2, "EPUB 3.3 · DCAT-3"),
+  ("小组备忘", 2, "用户代理 · DID 扩展备忘"),
+  ("纳入章程", 6, "数字凭证 · WebXR 人体追踪"),
+]
+rows = ""
+for name, n, eg in stages:
+    w = n / 21 * 100
+    rows += f'''<div class="hbar"><div class="hname">{name}</div>
+      <div class="htrack"><div class="hfill" style="width:{w:.1f}%;background:{A};opacity:{0.45 + 0.55*n/21:.2f}"></div></div>
+      <div class="hnum">{n}</div><div class="hex">{eg}</div></div>'''
+s.append(page("02 / 阶段", "过半技术仍停在首稿",
+  f'<div class="chart" style="padding-top:26px">{rows}</div>', A, H, P, "W3C 三年"))
+
+# 技术类别
+cats = [
+  ("CSS 与样式", 10, "指针驱动动画 · 链接参数 · 背景 L4"),
+  ("身份与凭证", 6, "DID Resolution · 数字凭证 · FedCM"),
+  ("设备与隐私", 6, "设备姿态 · GPC · WebXR 人体追踪"),
+  ("无障碍", 5, "WAI-ARIA 1.3 · DPub-ARIA · ACT 规则"),
+  ("运行时与性能", 5, "WebGPU · WASM 2.0 · WebDriver BiDi"),
+  ("媒体与呈现", 4, "DAPT · Web Audio 1.1 · Open Screen"),
+  ("出版与数据", 4, "EPUB 3.3 · EPUB 3.4 · DCAT-3"),
+]
+rows = ""
+for name, n, eg in cats:
+    rows += f'''<div class="hbar"><div class="hname">{name}</div>
+      <div class="htrack"><div class="hfill" style="width:{n/10*100:.0f}%;background:{A};opacity:{0.35 + 0.65*n/10:.2f}"></div></div>
+      <div class="hnum">{n}</div><div class="hex">{eg}</div></div>'''
+s.append(page("03 / 类别", "CSS 是最大单一方向",
+  f'<div class="chart" style="padding-top:26px">{rows}</div>', A, H, P, "W3C 三年"))
+
+# 主题方向
+tops = [
+  ("Agentic Web / AI", 12, "WebSkill · GenUI · MCP 服务"),
+  ("平台运行时", 9, "WinterTC · Web Install · WebDX"),
+  ("安全隐私支付", 7, "第三方 cookies · C2PA · SPC"),
+  ("数字身份", 5, "DID 方法 · 受控标识符 · IIFAA"),
+  ("无障碍·国际化", 5, "WCAG · 多语言断行 · WoT"),
+  ("引擎与生态", 3, "Ladybird · 引擎多样性 · 企业浏览器"),
+]
+rows = ""
+for name, n, eg in tops:
+    rows += f'''<div class="hbar"><div class="hname">{name}</div>
+      <div class="htrack"><div class="hfill" style="width:{n/12*100:.0f}%;background:{A};opacity:{0.35 + 0.65*n/12:.2f}"></div></div>
+      <div class="hnum">{n}</div><div class="hex">{eg}</div></div>'''
+s.append(page("04 / 主题", "主题里，智能体占了四分之一",
+  f'<div class="chart" style="padding-top:26px">{rows}</div>', A, H, P, "W3C 三年"))
+
+s.append(page("05 / 结论", "三条结论，一句提醒", f'''<div class="two">
+  <div class="col"><h4>读出来的三条</h4><ul>
+    <li>立项峰值在 2024，之后逐年递减</li>
+    <li>交付很慢：21 项仍在首稿</li>
+    <li>话题从规范转向智能体</li>
+  </ul></div>
+  <div class="col"><h4>一句提醒</h4><ul>
+    <li>条目数 ≠ 标准数，别直接引用</li>
+    <li>2026 技术少，可能是报道重心转移</li>
+    <li>专辑缺月，趋势线两端不可信</li>
+  </ul></div></div>''', A, H, P, "W3C 三年"))
+
+open(f"{OUT}/w3c-tracking.html", "w", encoding="utf-8").write(
+    shell("W3C 三年技术演进", "\n".join(s)))
+
 # ============ index ============
 DECKS = [
  ("chrome-ai.html", "Chrome Built-in AI APIs", "七个设备端 API：提示、摘要、翻译、校对、向量、分类", "5 页", "#4285f4"),
@@ -591,6 +703,7 @@ DECKS = [
  ("modern-web-guidance.html", "Modern Web Guidance", "装进编码智能体的 200+ 篇 Web 平台指南", "5 页", "#4285f4"),
  ("devtools.html", "DevTools MCP & AI", "面板里的 Gemini，与给智能体的浏览器运行时", "5 页", "#34a853"),
  ("web-ui-features.html", "New Web UI Features", "HTML 拿到行为、CSS 拿到逻辑、JS 拿到状态保持", "5 页", "#ea4335"),
+ ("w3c-tracking.html", "W3C 三年技术演进", "137 篇文章里，W3C 把注意力放在了哪", "7 页", "#4285f4"),
 ]
 cards_html = ""
 for href, name, desc, pages, color in DECKS:
