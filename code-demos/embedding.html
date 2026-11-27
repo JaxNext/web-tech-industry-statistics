@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script type="module">
+        function cosineSimilarity(vecA, vecB) {
+            if (!vecA || !vecB || vecA.length !== vecB.length) return 0;
+            let dotProduct = 0, normA = 0, normB = 0;
+            for (let i = 0; i < vecA.length; i++) {
+                dotProduct += vecA[i] * vecB[i];
+                normA += vecA[i] * vecA[i];
+                normB += vecB[i] * vecB[i];
+            }
+            if (normA === 0 || normB === 0) return 0;
+            return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB));
+        }
+
+        const availability = await SemanticEmbedder.availability()
+
+        const embedder = await SemanticEmbedder.create({
+            monitor (m) {
+                m.addEventListener('downloadprogress', e => {
+                    const { loaded, total } = e
+                    console.log('Download progress', loaded, total);
+                    
+                })
+            }
+        })
+
+        // const res2 = await embedder.embed([
+        // "Built-in AI APIs use on-device models.",
+        // "Embeddings are high-dimensional vectors representing semantic meaning.",
+        // ], {
+        //     taksType: 'semantic-similarity'
+        // })
+        // console.log(res2);
+
+        const res1 = await embedder.embed('The quick brown fox jumps over the lazy dog.', {
+            taksType: 'semantic-similarity'
+        })
+        console.log(res1);
+
+        const res3 = await embedder.embed('A fast, dark-colored fox leaps over a resting hound.', {
+            taksType: 'retrieval-document'
+        })
+        console.log(res3);
+        console.log(cosineSimilarity(res1.embeddings[0].values, res3.embeddings[0].values));
+        
+        // {
+        //     "embeddings": [
+        //         {
+        //             "values": {
+        //                 "0": -0.09275171905755997,
+        //                 "1": 0.07050445675849915,
+        //                 "2": 0.08615162968635559,
+        //                 "3": -0.014594929292798042,
+        //                 ...
+        //             } // Float32Array
+        //         }
+        //     ]
+        // }
+        embedder.destroy()
+    </script>
+</body>
+</html>
